@@ -1,0 +1,31 @@
+{% include "header.html" %}
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url({{ url_for('static', filename='img/about-bg.jpg')}})">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="page-heading">
+            <h1>About Me</h1>
+            <span class="subheading">This is what I do.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <p>Hi my name is <strong>Siddharth Jain</strong>, I'm a 3rd Year student at Maharaja Surajmal Institute of Technology pursuing my B.Tech in the field of Information Technology. I'm a Python Developer who's always looking for new ideas and opportunities.</p>
+        <p>This blog is a culmination of all the ideas and different parts of my life that I want to share with you.</p>
+        <p>My goal is to build a community who's always learning and have constant motivation to help others to achieve their goals.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  {% include "footer.html" %}
