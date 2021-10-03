@@ -1,3 +1,3 @@
 # Blog-post
-A RESTful Blog built with Flask and Postgres.\n
+A RESTful Blog built with Flask and Postgres.
 https://sid-blog-post.herokuapp.com/
