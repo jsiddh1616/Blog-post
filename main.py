@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -10,10 +10,11 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 from functools import wraps
 from flask import abort
+import smtplib
 import os
 
-MY_EMAIL = "daypython32@gmail.com"
-MY_PASSWORD = "abcd123()"
+MY_EMAIL = os.environ.get('EMAIL')
+MY_PASSWORD = os.environ.get('PASSWORD')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -103,6 +104,18 @@ def admin_only(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+# Send-Email Function
+def send_email(name, email, phone, message):
+    with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+        connection.starttls()
+        connection.login(user=MY_EMAIL, password=MY_PASSWORD)
+        connection.sendmail(
+            from_addr=MY_EMAIL,
+            to_addrs=MY_EMAIL,
+            msg=f"Subject:New Message!\n\nName: {name}\nEmail: {email}\nPh.number: {phone}\nMessage: {message}"
+        )
 
 
 @app.route('/')
@@ -198,9 +211,13 @@ def about():
     return render_template("about.html", current_user=current_user)
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template("contact.html", current_user=current_user)
+    if request.method == "POST":
+        data = request.form
+        send_email(data['name'], data['email'], data['phone'], data['message'])
+        return render_template('contact.html', msg_sent=True)
+    return render_template("contact.html", current_user=current_user, msg_sent=False)
 
 
 @app.route("/new-post", methods=["GET", "POST"])
