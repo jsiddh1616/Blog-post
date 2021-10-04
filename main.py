@@ -106,18 +106,6 @@ def admin_only(f):
     return decorated_function
 
 
-# Send-Email Function
-def send_email(name, email, phone, message):
-    with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
-        connection.starttls()
-        connection.login(user=MY_EMAIL, password=MY_PASSWORD)
-        connection.sendmail(
-            from_addr=MY_EMAIL,
-            to_addrs=MY_EMAIL,
-            msg=f"Subject:New Message!\n\nName: {name}\nEmail: {email}\nPh.number: {phone}\nMessage: {message}"
-        )
-
-
 @app.route('/')
 def get_all_posts():
     posts = BlogPost.query.all()
@@ -213,11 +201,22 @@ def about():
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    if request.method == "POST":
-        data = request.form
-        send_email(data['name'], data['email'], data['phone'], data['message'])
-        return render_template('contact.html', msg_sent=True)
-    return render_template("contact.html", current_user=current_user, msg_sent=False)
+    if request.method == "GET":
+        return render_template("contact.html", msg_sent=False)
+    else:
+        name = request.form["name"]
+        email = request.form["email"]
+        number = request.form["phone"]
+        message = request.form["message"]
+        with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+            connection.starttls()
+            connection.login(user=MY_EMAIL, password=MY_PASSWORD)
+            connection.sendmail(
+                from_addr=MY_EMAIL,
+                to_addrs=MY_EMAIL,
+                msg=f"Subject:New Message!\n\nName: {name}\nemail: {email}\nPh.number: {number}\nMessage: {message}"
+            )
+        return render_template("contact.html", msg_sent=True)
 
 
 @app.route("/new-post", methods=["GET", "POST"])
